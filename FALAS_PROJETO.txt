@@ -1,0 +1,55 @@
+================================================================================
+BLOCO DE NOTAS - APRESENTAÇÃO DO PROJETO MG SENAI DASHBOARD
+================================================================================
+
+Este arquivo contém os roteiros de apresentação organizados pela quantidade
+de alunos que comparecerem. Escolha o cenário correspondente e siga as falas.
+
+================================================================================
+CENÁRIO 1: CÉSAR E MURILO (2 alunos)
+================================================================================
+
+CÉSAR:
+Nosso projeto é um sistema de reconhecimento facial otimizado para TV/Multimídia do SENAI. Desenvolvemos uma aplicação web que captura fotos automaticamente, aplica molduras personalizadas e envia via WhatsApp. O que resolve? Cria uma experiência interativa para visitantes do SENAI, permitindo que tirem fotos com mascotes e cenários temáticos, recebendo a imagem no celular.
+
+MURILO:
+Implementamos três IAs principais: face-api.js para detecção facial em tempo real com TinyFaceDetector, que guia o usuário a posicionar o rosto corretamente; BodyPix do TensorFlow.js para remoção inteligente de fundo, permitindo aplicar molduras como fundo da foto; e um sistema de análise de perfil que identifica características da foto para gerar perfis profissionais lúdicos. O sistema também tem filtros de imagem automatizados (brilho, contraste, saturação).
+
+================================================================================
+CENÁRIO 2: CÉSAR E PEDRO (2 alunos)
+================================================================================
+
+CÉSAR:
+O MG Senai Dashboard é uma aplicação web completa para fotobooth interativo. Usamos HTML5, CSS3 e JavaScript com TensorFlow.js para criar um sistema que acessa a câmera, detecta rostos, captura fotos e aplica molduras personalizadas. Resolve o problema de engajamento em eventos do SENAI, oferecendo uma experiência moderna que as pessoas podem levar no WhatsApp.
+
+PEDRO:
+As IAs implementadas incluem: detecção facial com face-api.js que valida a posição do rosto em tempo real (centralização, distância); segmentação de imagem com BodyPix para remover o fundo original e substituir por molduras temáticas; e um sistema de filtros inteligentes com presets automáticos (Normal, P&B, Cyberpunk, Vintage). A interface é totalmente otimizada para TV com teclado virtual na tela e timer configurável.
+
+================================================================================
+CENÁRIO 3: CÉSAR E MARCOS (2 alunos)
+================================================================================
+
+CÉSAR:
+Este projeto é um sistema de fotobooth inteligente para o SENAI. Desenvolvemos uma aplicação web que usa IA para reconhecimento facial e processamento de imagem. O problema que resolve é criar memórias interativas para visitantes do SENAI - a pessoa tira foto, escolhe molduras temáticas (mascotes, cenários industriais), e recebe via QR Code no WhatsApp.
+
+MARCOS:
+Implementamos três tecnologias de IA: face-api.js com TinyFaceDetector para detectar rostos e validar posicionamento em tempo real, dando feedback se está muito perto, longe ou descentralizado; BodyPix do TensorFlow.js para segmentação de pessoa e remoção de fundo, permitindo aplicar molduras como fundo; e análise de landmarks faciais para calcular posições de acessórios. O sistema também tem IA de filtros com presets automáticos.
+
+================================================================================
+CENÁRIO 4: CÉSAR, MURILO, MARCOS E PEDRO (4 alunos)
+================================================================================
+
+CÉSAR:
+Nosso projeto é o MG Senai Dashboard, um sistema de reconhecimento facial para TV/Multimídia. Desenvolvemos uma aplicação web completa que captura fotos com câmera, usa IA para detectar rostos, aplica molduras personalizadas e gera QR Code para envio via WhatsApp. Resolve o problema de engajamento em eventos do SENAI, criando uma experiência interativa e moderna.
+
+MURILO:
+A implementação usa face-api.js para detecção facial em tempo real com TinyFaceDetector, que valida a posição do rosto e guia o usuário. Também carregamos faceLandmark68Net, faceRecognitionNet e faceExpressionNet para análise avançada. O sistema tem timer configurável (3s, 5s, 10s) com contagem regressiva falada e sons de feedback.
+
+MARCOS:
+A segunda IA é BodyPix do TensorFlow.js para segmentação de imagem e remoção de fundo. Isso permite aplicar molduras como fundo da foto, criando efeitos de chroma key sem tela verde. O sistema também tem filtros de imagem manuais (brilho, contraste, saturação) e presets automáticos (Normal, P&B, Cyberpunk, Vintage) aplicados via Canvas API.
+
+PEDRO:
+A terceira funcionalidade de IA é o sistema de análise de perfil que gera perfis profissionais lúdicos baseados na foto capturada. O sistema também inclui tutorial interativo, interface otimizada para TV com teclado virtual na tela, e gera QR Code para download ou envio direto ao WhatsApp. Funciona totalmente no navegador (client-side) sem backend necessário.
+
+================================================================================
+================================================================================

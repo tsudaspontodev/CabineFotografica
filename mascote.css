@@ -1,0 +1,42 @@
+/* ===== Mascote animado ===== */
+/* espaço do mascote no passo 1 (no lugar do antigo GIF) */
+.mascote-dock { width: 100%; height: 20vh; min-height: 120px; }
+/* o mascote é desenhado num canvas fixo que acompanha o lugar dele (painel, câmera ou canto) */
+#mascote {
+    position: fixed; left: 0; top: 0; width: 0; height: 0;
+    z-index: 30; opacity: 0; transition: opacity .4s; touch-action: manipulation;
+    background: transparent !important;
+}
+#mascote.pronto { opacity: 1; }
+#mascote[data-lugar="mini"] { z-index: 1200; }
+#mascote.anim {
+    transition: left .6s cubic-bezier(.5, 0, .2, 1), top .6s cubic-bezier(.5, 0, .2, 1),
+                width .6s cubic-bezier(.5, 0, .2, 1), height .6s cubic-bezier(.5, 0, .2, 1), opacity .4s;
+}
+/* balão de fala no tema da página */
+#mascoteFala {
+    position: fixed; left: 0; top: 0; z-index: 31;
+    max-width: min(320px, 80vw); padding: 10px 16px; border-radius: 16px;
+    background: #ffffff; color: #021a4a; border: 2px solid #00f0ff;
+    box-shadow: 0 0 18px rgba(0, 240, 255, .35), 0 10px 24px rgba(0, 0, 0, .35);
+    font: 700 clamp(15px, 2vh, 20px)/1.25 'Segoe UI', Arial, sans-serif; text-align: center;
+    pointer-events: none; opacity: 0; transform: scale(.7) translateY(10px);
+    transform-origin: var(--t, 50%) 100%;
+    transition: opacity .18s, transform .35s cubic-bezier(.34, 1.6, .64, 1);
+}
+#mascoteFala.on { opacity: 1; transform: none; }
+#mascoteFala[data-lugar="mini"] { z-index: 1201; font-size: 15px; max-width: 240px; }
+#mascoteFala::after {
+    content: ""; position: absolute; left: var(--t, 50%); bottom: -9px; width: 14px; height: 14px; margin-left: -7px;
+    background: #fff; border-right: 2px solid #00f0ff; border-bottom: 2px solid #00f0ff; transform: rotate(45deg);
+}
+/* botão embaixo do mascote */
+#step1 .btn-mascote {
+    width: min(100%, 36vh); margin: 4vh auto 0; justify-content: center;
+    padding: 1vh 1.4vw; font-size: clamp(.95rem, 1.9vh, 1.25rem);
+    background: rgba(255, 42, 109, .14); color: #fff; border: 2px solid #ff2a6d;
+    box-shadow: 0 0 14px rgba(255, 42, 109, .35);
+}
+#step1 .btn-mascote:hover { background: rgba(255, 42, 109, .28); }
+#step1 .btn-mascote.ativo { background: linear-gradient(135deg, #ff2a6d 0%, #b5179e 100%); border-color: #ff7aa5; }
+@media (prefers-reduced-motion: reduce) { #mascote.anim { transition: none; } }

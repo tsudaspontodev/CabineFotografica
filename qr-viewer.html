@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sua foto Mundo Senai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #012338 0%, #001824 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #00f0ff;
+        }
+        .subtitle {
+            color: #a0c4d4;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .image-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.2);
+        }
+        .image-container img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+        .btn-download {
+            background: linear-gradient(135deg, #00f0ff 0%, #0080ff 100%);
+            color: #001824;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.6);
+        }
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            color: #ff8888;
+        }
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 40px;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 240, 255, 0.3);
+            border-top-color: #00f0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .logo {
+            max-width: 120px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/mundo_senai_4.png" alt="Mundo SENAI" class="logo" onerror="this.style.display='none'">
+        <h1>Sua foto Mundo Senai</h1>
+        <p class="subtitle">Receba sua foto no WhatsApp</p>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Carregando sua foto...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <p id="errorText">Erro ao carregar a foto. Tente novamente.</p>
+        </div>
+
+        <div id="content" style="display: none;">
+            <div class="image-container">
+                <img id="photo" alt="Sua foto" />
+            </div>
+
+            <div class="buttons">
+                <a id="whatsappBtn" class="btn btn-whatsapp" target="_blank">
+                    <span>📱</span>
+                    Enviar para meu WhatsApp
+                </a>
+                <a id="downloadBtn" class="btn btn-download" download="foto-senai.jpg">
+                    <span>⬇️</span>
+                    Baixar foto
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pegar parâmetros da URL
+        const params = new URLSearchParams(window.location.search);
+        const imageUrl = params.get('img');
+        const phone = params.get('phone');
+
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const errorText = document.getElementById('errorText');
+        const content = document.getElementById('content');
+        const photo = document.getElementById('photo');
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        if (!imageUrl) {
+            loading.style.display = 'none';
+            error.style.display = 'block';
+            errorText.textContent = 'Nenhuma foto encontrada. Por favor, faça uma nova foto.';
+        } else {
+            // Carregar imagem
+            photo.onload = () => {
+                loading.style.display = 'none';
+                content.style.display = 'block';
+
+                // Configurar botão de download
+                downloadBtn.href = imageUrl;
+
+                // Configurar botão do WhatsApp
+                if (phone) {
+                    const message = encodeURIComponent('Aqui esta sua foto Mundo Senai: ' + imageUrl);
+                    whatsappBtn.href = `https://wa.me/55${phone}?text=${message}`;
+                } else {
+                    // Se não tiver número, abre apenas o chat
+                    const message = encodeURIComponent('Aqui esta sua foto Mundo Senai: ' + imageUrl);
+                    whatsappBtn.href = `https://wa.me/?text=${message}`;
+                }
+            };
+
+            photo.onerror = () => {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                errorText.textContent = 'Erro ao carregar a imagem. O link pode ter expirado.';
+            };
+
+            photo.src = imageUrl;
+        }
+    </script>
+</body>
+</html>

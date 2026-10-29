@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Webcam</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .webcam-container {
+            width: 100%;
+            height: 450px;
+
+            background: #222;
+            border-radius: 10px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            overflow: hidden;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mensagem {
+            color: white;
+            font-size: 18px;
+        }
+
+        .botoes {
+            margin-top: 20px;
+
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #btnIniciar {
+            background: #198754;
+            color: white;
+        }
+
+        #btnParar {
+            background: #dc3545;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #status {
+            margin-top: 15px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Webcam do Computador</h1>
+
+        <div class="webcam-container">
+
+            <span class="mensagem" id="mensagem">
+                A câmera está desligada
+            </span>
+
+            <video id="webcam" autoplay playsinline style="display: none;"></video>
+
+        </div>
+
+        <div class="botoes">
+
+            <button id="btnIniciar">
+                Iniciar câmera
+            </button>
+
+            <button id="btnParar">
+                Desligar câmera
+            </button>
+
+        </div>
+
+        <p id="status">
+            Clique em "Iniciar câmera" para utilizar a webcam.
+        </p>
+
+    </div>
+
+    <script>
+
+        const video = document.getElementById("webcam");
+        const mensagem = document.getElementById("mensagem");
+        const status = document.getElementById("status");
+
+        const btnIniciar = document.getElementById("btnIniciar");
+        const btnParar = document.getElementById("btnParar");
+
+        let stream = null;
+
+
+        // INICIAR WEBCAM
+        btnIniciar.addEventListener("click", async () => {
+
+            try {
+
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+
+                video.srcObject = stream;
+
+                video.style.display = "block";
+                mensagem.style.display = "none";
+
+                status.textContent = "Webcam ativada com sucesso.";
+
+            } catch (erro) {
+
+                console.error(erro);
+
+                status.textContent =
+                    "Não foi possível acessar a webcam.";
+
+                alert(
+                    "Não foi possível acessar a câmera. " +
+                    "Verifique se o navegador possui permissão para utilizar a webcam."
+                );
+            }
+
+        });
+
+
+        // DESLIGAR WEBCAM
+        btnParar.addEventListener("click", () => {
+
+            if (stream) {
+
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+
+                stream = null;
+            }
+
+            video.srcObject = null;
+
+            video.style.display = "none";
+            mensagem.style.display = "block";
+
+            status.textContent = "Webcam desligada.";
+
+        });
+
+    </script>
+
+</body>
+</html>

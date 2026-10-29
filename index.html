@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconhecimento Facial - TV</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mascote.css">
+</head>
+<body>
+    <!-- Botão FAQ -->
+    <button class="faq-button" id="faqButton" aria-label="Abrir tutorial de ajuda">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" aria-hidden="true">
+            <path
+                d="M80 160c0-35.3 28.7-64 64-64h32c35.3 0 64 28.7 64 64v3.6c0 21.8-11.1 42.1-29.4 53.8l-42.2 27.1c-25.2 16.2-40.4 44.1-40.4 74V320c0 17.7 14.3 32 32 32s32-14.3 32-32v-1.4c0-8.2 4.2-15.8 11-20.2l42.2-27.1c36.6-23.6 58.8-64.1 58.8-107.7V160c0-70.7-57.3-128-128-128H144C73.3 32 16 89.3 16 160c0 17.7 14.3 32 32 32s32-14.3 32-32zm80 320a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"
+            ></path>
+        </svg>
+        <span class="tooltip">Ajuda</span>
+    </button>
+
+    <!-- Modal de Tutorial -->
+    <div id="tutorialModal" class="tutorial-modal">
+        <div class="tutorial-content">
+            <h2>📚 Como usar o sistema</h2>
+            <div class="tutorial-steps">
+                <div class="tutorial-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Posicione seu rosto</h4>
+                        <p>Fique de frente para a câmera, entre as duas faixas amarelas da lousa. O sistema detectará as faixas automaticamente e manterá apenas o que estiver entre elas.</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Clique em "Capturar"</h4>
+                        <p>Quando seu rosto estiver detectado, clique no botão "Capturar". Uma contagem regressiva de 3 segundos iniciará antes da foto ser tirada.</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Escolha uma moldura</h4>
+                        <p>Após capturar a foto, a tela avança sozinha: escolha uma moldura, experimente os acessórios e veja o resultado ao vivo ao lado.</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Baixe sua foto</h4>
+                        <p>Após escolher a moldura, toque em "Continuar". A foto será exibida com um QR Code ao lado. Escaneie o QR Code com seu celular para baixar a foto.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="tutorial-close" id="closeTutorial">Entendi!</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-logo">
+                <img src="assets/logo.png" alt="Sistema Mundo Senai" class="logo-header">
+            </div>
+            <div class="header-text">
+                <h1>Sua foto Mundo Senai</h1>
+                <p class="subtitle">Capture, escolha a moldura e receba no WhatsApp</p>
+            </div>
+            <div class="header-mundo">
+                <img src="assets/mundo_senai_4.png" alt="Mundo SENAI" class="logo-mundo">
+            </div>
+        </header>
+
+        <nav class="stepper" id="stepper" aria-label="Etapas do processo: Foto, Moldura e Download">
+            <div class="stepper-item" data-s="1" aria-current="step"><span class="stepper-dot">1</span><span class="stepper-label">Foto</span></div>
+            <div class="stepper-line" aria-hidden="true"></div>
+            <div class="stepper-item" data-s="2"><span class="stepper-dot">2</span><span class="stepper-label">Moldura</span></div>
+            <div class="stepper-line" aria-hidden="true"></div>
+            <div class="stepper-item" data-s="3"><span class="stepper-dot">3</span><span class="stepper-label">Download</span></div>
+        </nav>
+
+        <main>
+            <div class="wizard">
+                <!-- Palco: câmera / foto (sempre visível) -->
+                <div class="stage">
+                    <div class="video-container" role="region" aria-label="Área de captura de foto">
+                        <video id="video" autoplay muted playsinline aria-label="Feed da câmera ao vivo"></video>
+                        <canvas id="canvas" style="display: none;" aria-hidden="true"></canvas>
+                        <img id="capturedPhoto" style="display: none;" alt="Foto capturada pelo usuário">
+                        <div id="overlay" class="overlay" aria-hidden="true">
+                            <div class="face-box" aria-hidden="true"></div>
+                        </div>
+                        <div id="countdownTimer" class="countdown-timer" style="display: none;" role="timer" aria-live="polite">
+                            <span id="countdownNumber">3</span>
+                        </div>
+                        <div id="flash" class="flash" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <!-- Painel dos passos -->
+                <div class="side">
+                    <!-- PASSO 1: capturar -->
+                    <section class="step" id="step1">
+                        <h2 class="step-title"><span class="step-badge">1</span> Posicione-se e capture</h2>
+                        <p class="step-desc">Fique de frente para a câmera e faça um gesto.</p>
+                        <div class="promotional-video-container">
+                            <div id="mascoteDock" class="mascote-dock" aria-hidden="true"></div>
+                        </div>
+                        <button type="button" id="mascoteFotoBtn" class="btn btn-mascote" aria-pressed="false">
+                            <span class="icon" aria-hidden="true">🤳</span>
+                            Tirar foto comigo
+                        </button>
+                        <div class="controls">
+                            <button id="captureFace" class="btn btn-success" aria-label="Capturar foto">
+                                <span class="icon" aria-hidden="true">📸</span>
+                                Capturar
+                            </button>
+                            <button id="timerButton" class="btn btn-secondary" aria-label="Selecionar tempo do timer">
+                                <span class="icon" aria-hidden="true">⏱️</span>
+                                Timer: 3s
+                            </button>
+                            <button id="orientationButton" class="btn btn-orientation" aria-label="Alternar orientação da câmera">
+                                <span class="icon" aria-hidden="true">📐</span>
+                                Paisagem
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- PASSO 2: moldura -->
+                    <section class="step" id="step2">
+                        <h2 class="step-title"><span class="step-badge">2</span> Escolha sua moldura</h2>
+
+                        <!-- Perfil profissional (resultado lúdico) -->
+                        <div class="perfil-card" id="perfilCard" hidden>
+                            <span class="perfil-icone" aria-hidden="true">🔥</span>
+                            <div class="perfil-texto">
+                                <strong class="perfil-nome"></strong>
+                                <span class="perfil-frase"></span>
+                            </div>
+                            <button type="button" id="aplicarPerfil" class="btn btn-success perfil-aplicar">Aplicar</button>
+                        </div>
+
+                        <!-- Selo -->
+                        <div class="acessorios-section">
+                            <label class="selo-toggle"><input type="checkbox" id="seloToggle" checked> Selo</label>
+                        </div>
+
+                        <!-- Presets de Filtros Rápidos -->
+                        <div class="preset-filters-section" style="margin-bottom: 10px;">
+                            <h3 style="font-size: 0.9em; color: #00f0ff; margin-bottom: 6px;">Estilos rápidos</h3>
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <button type="button" class="btn btn-secondary preset-btn" data-preset="normal" style="padding: 6px 12px; font-size: 0.8em;">Normal</button>
+                                <button type="button" class="btn btn-secondary preset-btn" data-preset="mono" style="padding: 6px 12px; font-size: 0.8em;">P&B</button>
+                                <button type="button" class="btn btn-secondary preset-btn" data-preset="cyber" style="padding: 6px 12px; font-size: 0.8em;">Cyberpunk</button>
+                                <button type="button" class="btn btn-secondary preset-btn" data-preset="vintage" style="padding: 6px 12px; font-size: 0.8em;">Vintage</button>
+                            </div>
+                        </div>
+
+                        <!-- Melhoria com IA -->
+                        <div class="ai-enhance-section" style="margin-bottom: 10px;">
+                            <button type="button" id="aiEnhanceBtn" class="btn btn-ai" style="padding: 8px 16px; font-size: 0.9em; width: 100%;">
+                                <span class="icon" aria-hidden="true">✨</span>
+                                Melhorar foto com IA
+                            </button>
+                        </div>
+
+                        <!-- Filtro do Mascote -->
+                        <div class="mascot-filter-section" style="margin-bottom: 10px;">
+                            <label class="mascot-toggle" style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #fff; font-weight: bold;">
+                                <input type="checkbox" id="mascotToggle" style="width: 20px; height: 20px; accent-color: #ff2a6d;">
+                                <span>🤖 Mascote na foto</span>
+                            </label>
+                        </div>
+
+                        <!-- Controles de filtro manuais originais -->
+                        <div class="filters-section">
+                            <h3>Ajustes da foto</h3>
+                            <div class="filter-controls">
+                                <div class="filter-control">
+                                    <label for="brightness">Brilho</label>
+                                    <input type="range" id="brightness" min="50" max="150" value="100" aria-label="Ajustar brilho da foto">
+                                    <span class="filter-value">100%</span>
+                                </div>
+                                <div class="filter-control">
+                                    <label for="contrast">Contraste</label>
+                                    <input type="range" id="contrast" min="50" max="150" value="100" aria-label="Ajustar contraste da foto">
+                                    <span class="filter-value">100%</span>
+                                </div>
+                                <div class="filter-control">
+                                    <label for="saturation">Saturação</label>
+                                    <input type="range" id="saturation" min="0" max="200" value="100" aria-label="Ajustar saturação da foto">
+                                    <span class="filter-value">100%</span>
+                                </div>
+                                <button id="resetFilters" class="btn btn-secondary" aria-label="Resetar filtros para o padrão">
+                                    <span class="icon" aria-hidden="true">↺</span>
+                                    Resetar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Controles avançados de recorte (opcional) -->
+                        <div class="recorte-section" style="margin-bottom: 10px;">
+                            <details>
+                                <summary style="color: #00f0ff; cursor: pointer; padding: 8px; font-weight: bold;">
+                                    <span style="margin-right: 8px;">⚙️</span>
+                                    Ajustes avançados de recorte
+                                </summary>
+                                <div class="recorte-controls" style="padding: 10px; background: rgba(0, 240, 255, 0.05); border-radius: 8px; margin-top: 8px;">
+                                    <div class="filter-control">
+                                        <label for="featherRadius" style="font-size: 0.85em;">Suavização de borda</label>
+                                        <input type="range" id="featherRadius" min="0" max="5" value="2" step="0.5" aria-label="Ajustar suavização de borda">
+                                        <span class="filter-value" id="featherValue">2</span>
+                                    </div>
+                                    <div class="filter-control">
+                                        <label for="edgeSensitivity" style="font-size: 0.85em;">Sensibilidade a bordas</label>
+                                        <input type="range" id="edgeSensitivity" min="0" max="100" value="30" aria-label="Ajustar sensibilidade a bordas">
+                                        <span class="filter-value" id="edgeValue">30%</span>
+                                    </div>
+                                    <button id="resetRecorte" class="btn btn-secondary" style="font-size: 0.85em; padding: 6px 12px;" aria-label="Resetar ajustes de recorte">
+                                        <span class="icon" aria-hidden="true">↺</span>
+                                        Resetar recorte
+                                    </button>
+                                </div>
+                            </details>
+                        </div>
+
+                        <div class="frames-section">
+                            <div class="frames-container">
+                                <div class="frame-option" data-frame="" role="button" tabindex="0" aria-label="Sem moldura">
+                                    <div class="frame-preview frame-preview-sem" aria-hidden="true">🚫</div>
+                                    <span>Sem moldura</span>
+                                </div>
+                                <div class="frame-option" data-frame="assets/backdrop senai.jpg" role="button" tabindex="0" aria-label="Moldura Backdrop Senai">
+                                    <img src="assets/backdrop senai.jpg" class="frame-preview" alt="Preview da moldura Backdrop Senai">
+                                    <span>Backdrop Senai</span>
+                                </div>
+                                <div class="frame-option" data-frame="assets/bg-carros.jpg" role="button" tabindex="0" aria-label="Moldura Carros">
+                                    <img src="assets/bg-carros.jpg" class="frame-preview" alt="Preview da moldura Carros">
+                                    <span>Carros</span>
+                                </div>
+                                <div class="frame-option" data-frame="assets/bg-tornearia.jpg" role="button" tabindex="0" aria-label="Moldura Tornearia">
+                                    <img src="assets/bg-tornearia.jpg" class="frame-preview" alt="Preview da moldura Tornearia">
+                                    <span>Tornearia</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button id="retake" class="btn btn-secondary" aria-label="Fazer outra foto">
+                                <span class="icon" aria-hidden="true">🔄</span>
+                                Fazer outra foto
+                            </button>
+                            <button id="goToSend" class="btn btn-success" aria-label="Continuar para o passo do WhatsApp">
+                                Continuar
+                                <span class="icon" aria-hidden="true">➡️</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- PASSO 3: Exibir foto com QR Code para download -->
+                    <section class="step" id="step3">
+                        <h2 class="step-title"><span class="step-badge">3</span> Sua foto está pronta!</h2>
+                        <p class="step-desc">Escaneie o QR Code para baixar sua foto no celular.</p>
+                        <div class="qrcode-display" id="qrcodeDisplay">
+                            <img id="finalPhoto" alt="Sua foto com moldura" hidden>
+                            <div class="qrcode-container">
+                                <img id="downloadQrCode" alt="QR Code para download" style="width: 200px; height: 200px;">
+                                <p style="margin-top: 10px; color: #00f0ff;">Aponte a câmera do celular para baixar</p>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button id="cancelSend" class="btn btn-secondary" aria-label="Fazer outra foto">
+                                <span class="icon" aria-hidden="true">🔄</span>
+                                Fazer outra foto
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- PASSO 4: enviando -->
+                    <section class="step" id="step4">
+                        <div class="spinner" aria-hidden="true"></div>
+                        <h2 class="step-title center">Enviando sua foto...</h2>
+                        <p class="step-desc center">Só um instante, estamos preparando a sua foto.</p>
+                    </section>
+
+                    <div class="status" id="status">
+                        <p id="statusText">Iniciando câmera...</p>
+                        <div id="loadingProgress" class="loading-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <span class="progress-text" id="progressText">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Mensagens usadas pela tela de sucesso/fallback (ocultas) -->
+                    <div id="sendInstructions" class="send-instructions" style="display: none;">
+                        <p id="instructionText"></p>
+                        <p class="instruction-detail"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <!-- Mascote animado (quadros em assets/mascote/) -->
+    <canvas id="mascote" aria-label="Mascote do SENAI"></canvas>
+    <div id="mascoteFala" role="status" aria-live="polite"></div>
+    <script src="mascote.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
